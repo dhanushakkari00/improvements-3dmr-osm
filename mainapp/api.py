@@ -9,8 +9,9 @@ from django.http import JsonResponse, FileResponse, Http404, HttpResponseBadRequ
 from django.core.paginator import Paginator, EmptyPage
 from .models import LatestModel, Comment, Model
 from .utils import get_kv, MODEL_DIR, admin
-from django.db.models import Max
+from django.db.models import Max #Should be verified
 from django.views.decorators.csrf import csrf_exempt
+
 
 RESULTS_PER_API_CALL= 20
 

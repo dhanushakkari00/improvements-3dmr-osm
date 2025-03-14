@@ -34,4 +34,4 @@ CHANGES = {
 }
 
 # The directory the models will be stored in
-MODEL_DIR = '/home/tdmr/models'
+MODEL_DIR = 'D:\\3dmr\\models'

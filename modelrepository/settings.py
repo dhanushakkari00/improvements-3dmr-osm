@@ -93,7 +93,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': '3dmr',
         'USER': '3dmr',
-        'PASSWORD': '123123',
+        'PASSWORD': 'newpassword',
         'HOST': '127.0.0.1',
         'PORT': '5432',
     }

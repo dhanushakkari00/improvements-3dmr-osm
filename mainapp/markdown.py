@@ -1,6 +1,6 @@
 import mistune
+class CustomMarkdownRenderer(mistune.HTMLRenderer):
 
-class CustomMarkdownRenderer(mistune.Renderer):
     def autolink(self, link, is_email=False):
         text = link = mistune.escape_link(link)
         if is_email:

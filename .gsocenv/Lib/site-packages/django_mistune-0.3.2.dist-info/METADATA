@@ -1,0 +1,59 @@
+Metadata-Version: 2.1
+Name: django-mistune
+Version: 0.3.2
+Summary: Render Markdown in Django templates using the Mistune package.
+Project-URL: Documentation, https://github.com/leminaw/django-mistune#readme
+Project-URL: Issues, https://github.com/leminaw/django-mistune/issues
+Project-URL: Source, https://github.com/leminaw/django-mistune
+Author-email: LeMinaw <leminaw@gmail.com>
+License-Expression: MIT
+License-File: LICENSE.txt
+Keywords: commonmark,django,filter,markdown,template
+Classifier: Development Status :: 4 - Beta
+Classifier: Programming Language :: Python
+Classifier: Programming Language :: Python :: 3.7
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Programming Language :: Python :: 3.11
+Classifier: Programming Language :: Python :: Implementation :: CPython
+Classifier: Programming Language :: Python :: Implementation :: PyPy
+Requires-Python: >=3.7
+Requires-Dist: defusedxml~=0.7
+Requires-Dist: django>=3.2
+Requires-Dist: mistune~=2.0
+Provides-Extra: dev
+Requires-Dist: black; extra == 'dev'
+Requires-Dist: flake8; extra == 'dev'
+Requires-Dist: isort; extra == 'dev'
+Provides-Extra: test
+Requires-Dist: pytest; extra == 'test'
+Requires-Dist: pytest-cov; extra == 'test'
+Requires-Dist: pytest-django; extra == 'test'
+Description-Content-Type: text/markdown
+
+# django-mistune
+
+[![PyPI - Version](https://img.shields.io/pypi/v/django-mistune.svg)](https://pypi.org/project/django-mistune)
+[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/django-mistune.svg)](https://pypi.org/project/django-mistune)
+
+Simple yet customizable Django template filter to render Markdown using the
+awesome [Mistune](https://mistune.readthedocs.io/en/latest/) package.
+
+-----
+
+## Table of Contents
+
+- [Installation](#installation)
+- [License](#license)
+
+## Installation
+
+```console
+pip install django-mistune
+```
+
+## License
+
+`django-mistune` is distributed under the terms of the
+[MIT](https://spdx.org/licenses/MIT.html) license.
