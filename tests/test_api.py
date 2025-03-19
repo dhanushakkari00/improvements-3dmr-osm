@@ -80,7 +80,7 @@ class APITestCase(TestCase):
 
     def test_search_range(self):
         """Test GET /api/search_range/"""
-        response = self.client.get(reverse('search_range', args=[12.34, 56.78, 1000, 1]))
+        response = self.client.get(reverse('lookup_range', args=[12.34, 56.78, 1000, 1]))  # 🔧 Fix the reverse call
         self.assertEqual(response.status_code, 200)
 
     def test_search_full(self):
@@ -97,10 +97,10 @@ class APITestCase(TestCase):
 
     def test_get_filelist(self):
         """Test GET /api/get_filelist/"""
-        response = self.client.get(reverse('get_filelist', args=[self.model.model_id, self.model.revision]))
+        response = self.client.get(reverse('get_filelist', args=[self.model.model_id]))  # 🔧 Removed revision argument
         self.assertEqual(response.status_code, 200)
 
     def test_get_file_not_found(self):
         """Test GET /api/get_file/ with a non-existing file"""
-        response = self.client.get(reverse('get_file', args=["nonexistent.obj", self.model.model_id, self.model.revision]))
+        response = self.client.get(reverse('get_file', args=[self.model.model_id, "nonexistent.obj"]))  # 🔧 Removed revision argument
         self.assertEqual(response.status_code, 404)
