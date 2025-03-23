@@ -1,6 +1,10 @@
-name: Run Django Tests
+name: Django Tests
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [ main, unit_tests ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
   test:
@@ -10,9 +14,9 @@ jobs:
       postgres:
         image: postgres:13
         env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
           POSTGRES_DB: test_db
+          POSTGRES_USER: test_user
+          POSTGRES_PASSWORD: test_pass
         ports:
           - 5432:5432
         options: >-
@@ -20,12 +24,6 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-
-    env:
-      DJANGO_SETTINGS_MODULE: modelrepository.settings
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: test_db
 
     steps:
       - name: Checkout code
@@ -41,7 +39,14 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Run Tests
-        run: |
-          python manage.py migrate
-          python manage.py test
+      - name: Run migrations
+        run: python manage.py migrate
+        env:
+          DJANGO_SETTINGS_MODULE: modelrepository.settings
+          DATABASE_URL: postgres://test_user:test_pass@localhost:5432/test_db
+
+      - name: Run tests
+        run: python manage.py test
+        env:
+          DJANGO_SETTINGS_MODULE: modelrepository.settings
+          DATABASE_URL: postgres://test_user:test_pass@localhost:5432/test_db
