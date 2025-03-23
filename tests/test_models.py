@@ -7,7 +7,7 @@ class ProfileModelTest(TestCase):
         #Set up test data before each test method is run
         self.user = User.objects.create(username = "testuser")
         self.admin_user = User.objects.create(username = "adminuser" , is_staff = True)
-        self.profile = Profile.objects.get(user = self.user)
+        self.profile = Profile.objects.create(user = self.user)
     def test_profile_creation(self):
         self.assertEqual(self.profile.user.username, "testuser")
         #As the default description is "Your description..." we will verify it

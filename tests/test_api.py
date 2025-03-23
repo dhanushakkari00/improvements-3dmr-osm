@@ -102,7 +102,7 @@ class APITestCase(TestCase):
 
     def test_get_filelist(self):
         """Test GET /api/get_filelist/"""
-        response = self.client.get(reverse('get_filelist', args=[self.model.model_id]))  
+        response = self.client.get(reverse('get_list', args=[self.model.model_id]))  
         self.assertEqual(response.status_code, 200)
 
     def test_get_file_not_found(self):
