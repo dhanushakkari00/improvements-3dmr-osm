@@ -4,10 +4,15 @@ from mainapp.models import Model, LatestModel, Comment, Location, Category
 from django.urls import reverse
 from datetime import date
 import json
+import zipfile
+import os
 
 class APITestCase(TestCase):
     def setUp(self):
         """Set up test data"""
+        os.makedirs("/tmp/test-models/1", exist_ok=True)
+        with zipfile.ZipFile("/tmp/test-models/1/1.zip", "w") as zipf:
+            zipf.writestr("dummy.obj", "fake obj content")
         self.client = Client()
         self.user = User.objects.create(username="testuser")
 

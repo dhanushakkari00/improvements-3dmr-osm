@@ -10,6 +10,8 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
+ 
+        -c timezone=UTC
     services:
       postgres:
         image: postgres:13
@@ -25,19 +27,29 @@ jobs:
           --health-timeout 5s
           --health-retries 5
 
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Install PostgreSQL client
+        run: sudo apt-get install -y postgresql-client
+
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.10'
+          python-version: '3.9'
 
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
           pip install -r requirements.txt
+
+      - name: Enable hstore in `test_db` and `template1`
+        run: |
+          psql -h localhost -U test_user -d test_db -c "CREATE EXTENSION IF NOT EXISTS hstore;"
+          psql -h localhost -U test_user -d template1 -c "CREATE EXTENSION IF NOT EXISTS hstore;"
+        env:
+          PGPASSWORD: test_pass
 
       - name: Run migrations
         run: python manage.py migrate
@@ -46,7 +58,7 @@ jobs:
           DATABASE_URL: postgres://test_user:test_pass@localhost:5432/test_db
 
       - name: Run tests
-        run: python manage.py test
+        run: python manage.py test --keepdb
         env:
           DJANGO_SETTINGS_MODULE: modelrepository.settings
           DATABASE_URL: postgres://test_user:test_pass@localhost:5432/test_db
