@@ -10,8 +10,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
- 
-        
+
     services:
       postgres:
         image: postgres:13
@@ -19,6 +18,8 @@ jobs:
           POSTGRES_DB: test_db
           POSTGRES_USER: test_user
           POSTGRES_PASSWORD: test_pass
+          TZ: UTC
+          PGTZ: UTC
         ports:
           - 5432:5432
         options: >-
@@ -26,7 +27,8 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-          -e TZ=UTC
+          --env TZ=UTC
+
 
 
     steps:

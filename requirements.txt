@@ -9,7 +9,7 @@ idna==2.6
 mccabe==0.6.1
 mistune==2.0.5
 oauthlib==2.1.0
-psycopg2-binary==2.9.9
+psycopg2-binary==2.8.6
 pycodestyle==2.4.0
 pyflakes==2.0.0
 PyJWT==1.6.3

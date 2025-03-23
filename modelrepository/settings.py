@@ -82,6 +82,8 @@ TEMPLATES = [
     },
 ]
 
+
+
 LOGIN_REDIRECT_URL = '/login'
 
 WSGI_APPLICATION = 'modelrepository.wsgi.application'
@@ -94,8 +96,10 @@ WSGI_APPLICATION = 'modelrepository.wsgi.application'
 
 DATABASES = {
     'default': dj_database_url.config(
-        default='postgres://3dmr:newpassword@127.0.0.1:5432/3dmr'
-    )
+        default='postgres://3dmr:newpassword@127.0.0.1:5432/3dmr',
+
+    
+        )
 }
 
 

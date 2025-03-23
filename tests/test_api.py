@@ -14,7 +14,7 @@ class APITestCase(TestCase):
         with zipfile.ZipFile("/tmp/test-models/1/1.zip", "w") as zipf:
             zipf.writestr("dummy.obj", "fake obj content")
         self.client = Client()
-        self.user = User.objects.create(username="testuser")
+        self.user = User.objects.create(username="testuser",password ='testpass')
 
         self.location = Location.objects.create(latitude=12.34, longitude=56.78)
 
