@@ -1,6 +1,7 @@
 from django.utils.safestring import mark_safe
 import os
 
+
 # Gets the key and value of an OSM tag from a string
 # Note: any extra '=' chars other than the first will be included in the value.
 def get_kv(string):
@@ -34,7 +35,5 @@ CHANGES = {
     1: 'Revise',
 }
 
-MODEL_DIR = os.getenv("MODEL_DIR", "D:/3dmr/models")
 
-if os.getenv("CI") == "true":
-    MODEL_DIR = "/tmp/test-models"
+MODEL_DIR = os.getenv("MODEL_DIR", "/tmp/test-models")

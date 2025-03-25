@@ -3,21 +3,32 @@ from django.contrib.auth.models import User
 from mainapp.models import Model, LatestModel, Comment, Location, Category
 from django.urls import reverse
 from datetime import date
+from django.conf import settings
 import json
 import zipfile
 import os
+import tempfile
+import shutil
+from django.test.utils import override_settings
 
+
+@override_settings(MODEL_DIR=tempfile.gettempdir())  # Temporary base directory for tests
 class APITestCase(TestCase):
     def setUp(self):
-        """Set up test data"""
-        os.makedirs("/tmp/test-models/1", exist_ok=True)
-        with zipfile.ZipFile("/tmp/test-models/1/1.zip", "w") as zipf:
+        """Set up test data with isolated temp directory"""
+        self.test_dir = tempfile.mkdtemp()
+        #Sync MODEL_DIR for both Django and env-based access
+        self.override = self.settings(MODEL_DIR=self.test_dir)
+        self.override.enable()
+        os.environ["MODEL_DIR"] = self.test_dir
+
+        os.makedirs(os.path.join(self.test_dir, "1"), exist_ok=True)
+        with zipfile.ZipFile(os.path.join(self.test_dir, "1", "1.zip"), "w") as zipf:
             zipf.writestr("dummy.obj", "fake obj content")
+
         self.client = Client()
-        self.user = User.objects.create(username="testuser",password ='testpass')
-
+        self.user = User.objects.create_user(username="testuser", password="testpass")
         self.location = Location.objects.create(latitude=12.34, longitude=56.78)
-
         self.category = Category.objects.create(name="Buildings")
 
         self.model = Model.objects.create(
@@ -38,7 +49,6 @@ class APITestCase(TestCase):
         )
         self.model.categories.add(self.category)
 
-        # Create a comment
         self.comment = Comment.objects.create(
             author=self.user,
             model=self.model,
@@ -46,6 +56,12 @@ class APITestCase(TestCase):
             rendered_comment="Nice model!",
             is_hidden=False
         )
+
+    def tearDown(self):
+        """Remove temporary test directory and reset settings"""
+        shutil.rmtree(self.test_dir)
+        self.override.disable()  
+
 
     def test_get_info(self):
         """Test GET /api/get_info/"""

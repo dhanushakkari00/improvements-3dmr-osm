@@ -12,10 +12,18 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 
 import os
 import dj_database_url
+import tempfile
 
+# Especially in workflow
+if os.getenv("CI") == "true":
+    MODEL_DIR = "/tmp/test-models"
+else:
+    MODEL_DIR = "D:/3dmr/models"
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+MODEL_DIR = os.environ.get("MODEL_DIR", "/tmp/test-models")
 
 
 # Quick-start development settings - unsuitable for production

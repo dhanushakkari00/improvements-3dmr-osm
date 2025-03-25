@@ -12,6 +12,8 @@ from .utils import get_kv, MODEL_DIR, admin
 from django.db.models import Max #Should be verified
 from django.views.decorators.csrf import csrf_exempt
 from django.http import Http404
+from django.conf import settings
+
 
 
 
@@ -106,7 +108,7 @@ def get_filelist(request, model_id, revision=None):
     if model.is_hidden and not admin(request):
         raise Http404('Model does not exist.')
 
-    zip_file = ZipFile('{}/{}/{}.zip'.format(MODEL_DIR, model_id, revision))
+    zip_file = ZipFile('{}/{}/{}.zip'.format(settings.MODEL_DIR, model_id, revision))
 
     response = HttpResponse('\n'.join(zip_file.namelist()), content_type='text/plain')
     response['Cache-Control'] = 'public, max-age=86400';
