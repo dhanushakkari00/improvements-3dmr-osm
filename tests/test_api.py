@@ -3,7 +3,6 @@ from django.contrib.auth.models import User
 from mainapp.models import Model, LatestModel, Comment, Location, Category
 from django.urls import reverse
 from datetime import date
-from django.conf import settings
 import json
 import zipfile
 import os
@@ -12,12 +11,10 @@ import shutil
 from django.test.utils import override_settings
 
 
-@override_settings(MODEL_DIR=tempfile.gettempdir())  # Temporary base directory for tests
+@override_settings(MODEL_DIR=tempfile.gettempdir())
 class APITestCase(TestCase):
     def setUp(self):
-        """Set up test data with isolated temp directory"""
         self.test_dir = tempfile.mkdtemp()
-        #Sync MODEL_DIR for both Django and env-based access
         self.override = self.settings(MODEL_DIR=self.test_dir)
         self.override.enable()
         os.environ["MODEL_DIR"] = self.test_dir
@@ -37,6 +34,7 @@ class APITestCase(TestCase):
             revision=1,
             title="Test Model",
             description="A test model",
+            rendered_description="rendered test",
             location=self.location,
             license=1,
             upload_date=date.today(),
@@ -58,54 +56,60 @@ class APITestCase(TestCase):
         )
 
     def tearDown(self):
-        """Remove temporary test directory and reset settings"""
         shutil.rmtree(self.test_dir)
-        self.override.disable()  
-
+        self.override.disable()
 
     def test_get_info(self):
-        """Test GET /api/get_info/"""
         response = self.client.get(reverse('get_info', args=[self.model.model_id]))
         self.assertEqual(response.status_code, 200)
         data = response.json()
         self.assertEqual(data['title'], "Test Model")
         self.assertEqual(data['author'], self.user.username)
+        self.assertEqual(data['desc'], "A test model")
+        self.assertEqual(data['lat'], 12.34)
+        self.assertEqual(data['lon'], 56.78)
+        self.assertIn("Buildings", data['categories'])
 
     def test_get_info_hidden_model(self):
-        """Test GET /api/get_info/ for a hidden model"""
         self.model.is_hidden = True
         self.model.save()
         response = self.client.get(reverse('get_info', args=[self.model.model_id]))
         self.assertEqual(response.status_code, 404)
 
     def test_lookup_category(self):
-        """Test GET /api/lookup_category/"""
         response = self.client.get(reverse('lookup_category', args=["Buildings", 1]))
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.json()), 1)
+        data = response.json()
+        self.assertEqual(len(data), 1)
+        self.assertIn(self.model.model_id, data)
 
     def test_lookup_tag(self):
-        """Test GET /api/lookup_tag/"""
+        self.model.tags = {"shape": "pyramidal"}
+        self.model.save()
         response = self.client.get(reverse('lookup_tag', args=["shape=pyramidal", 1]))
         self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertIn(self.model.model_id, data)
 
     def test_lookup_author(self):
-        """Test GET /api/lookup_author/"""
         response = self.client.get(reverse('lookup_author', args=[self.user.username, 1]))
         self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertIn(self.model.model_id, data)
 
     def test_search_title(self):
-        """Test GET /api/search_title/"""
         response = self.client.get(reverse('search_title', args=["Test", 1]))
         self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertIn(self.model.model_id, data)
 
     def test_search_range(self):
-        """Test GET /api/search_range/"""
         response = self.client.get(reverse('lookup_range', args=[12.34, 56.78, 1000, 1]))  
         self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertIn(self.model.model_id, data)
 
     def test_search_full(self):
-        """Test POST /api/search_full/"""
         request_data = {
             "title": "Test",
             "lat": 12.34,
@@ -115,13 +119,14 @@ class APITestCase(TestCase):
         }
         response = self.client.post(reverse('search_full'), data=json.dumps(request_data), content_type="application/json")
         self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertIn(self.model.model_id, data)
 
     def test_get_filelist(self):
-        """Test GET /api/get_filelist/"""
         response = self.client.get(reverse('get_list', args=[self.model.model_id]))  
         self.assertEqual(response.status_code, 200)
+        self.assertIn("dummy.obj", response.content.decode())
 
     def test_get_file_not_found(self):
-        """Test GET /api/get_file/ with a non-existing file"""
         response = self.client.get(reverse('get_file', args=[self.model.model_id, "nonexistent.obj"])) 
         self.assertEqual(response.status_code, 404)
