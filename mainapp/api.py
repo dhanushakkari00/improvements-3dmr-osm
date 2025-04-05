@@ -11,6 +11,10 @@ from .models import LatestModel, Comment, Model
 from .utils import get_kv, MODEL_DIR, admin
 from django.db.models import Max #Should be verified
 from django.views.decorators.csrf import csrf_exempt
+from django.http import Http404
+from django.conf import settings
+
+
 
 
 RESULTS_PER_API_CALL= 20
@@ -104,11 +108,12 @@ def get_filelist(request, model_id, revision=None):
     if model.is_hidden and not admin(request):
         raise Http404('Model does not exist.')
 
-    zip_file = ZipFile('{}/{}/{}.zip'.format(MODEL_DIR, model_id, revision))
+    zip_file = ZipFile('{}/{}/{}.zip'.format(settings.MODEL_DIR, model_id, revision))
 
     response = HttpResponse('\n'.join(zip_file.namelist()), content_type='text/plain')
     response['Cache-Control'] = 'public, max-age=86400';
     return response
+
 
 @any_origin
 def get_file(request, filename, model_id, revision=None):
@@ -120,9 +125,13 @@ def get_file(request, filename, model_id, revision=None):
     if model.is_hidden and not admin(request):
         raise Http404('Model does not exist.')
 
-    zip_file = ZipFile('{}/{}/{}.zip'.format(MODEL_DIR, model_id, revision))
+    try:
+        zip_file = ZipFile('{}/{}/{}.zip'.format(MODEL_DIR, model_id, revision))
+        file_data = zip_file.open(filename)
+    except (FileNotFoundError, KeyError):
+        raise Http404(f"File '{filename}' not found.")
 
-    response = FileResponse(zip_file.open(filename))
+    response = FileResponse(file_data)
     response['Content-Disposition'] = 'attachment; filename={}'.format(filename)
     response['Content-Type'] = 'application/zip'
     response['Cache-Control'] = 'public, max-age=86400'
