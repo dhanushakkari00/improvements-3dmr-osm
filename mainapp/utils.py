@@ -1,4 +1,6 @@
 from django.utils.safestring import mark_safe
+import os
+
 
 # Gets the key and value of an OSM tag from a string
 # Note: any extra '=' chars other than the first will be included in the value.
@@ -33,5 +35,5 @@ CHANGES = {
     1: 'Revise',
 }
 
-# The directory the models will be stored in
-MODEL_DIR = 'D:\\3dmr\\models'
+
+MODEL_DIR = os.getenv("MODEL_DIR", "/tmp/test-models")

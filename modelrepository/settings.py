@@ -11,9 +11,19 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
 import os
+import dj_database_url
+import tempfile
+
+# Especially in workflow
+if os.getenv("CI") == "true":
+    MODEL_DIR = "/tmp/test-models"
+else:
+    MODEL_DIR = "D:/3dmr/models"
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+MODEL_DIR = os.environ.get("MODEL_DIR", "/tmp/test-models")
 
 
 # Quick-start development settings - unsuitable for production
@@ -80,6 +90,8 @@ TEMPLATES = [
     },
 ]
 
+
+
 LOGIN_REDIRECT_URL = '/login'
 
 WSGI_APPLICATION = 'modelrepository.wsgi.application'
@@ -88,19 +100,14 @@ WSGI_APPLICATION = 'modelrepository.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
+
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': '3dmr',
-        'USER': '3dmr',
-        'PASSWORD': 'newpassword',
-        'HOST': '127.0.0.1',
-        'PORT': '5432',
-        'TEST': {
-            'NAME': 'test_3dmr',
-            'MIRROR': 'default',
-        }
-    }
+    'default': dj_database_url.config(
+        default='postgres://3dmr:newpassword@127.0.0.1:5432/3dmr',
+
+    
+        )
 }
 
 
