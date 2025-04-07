@@ -12,7 +12,6 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 
 import os
 import dj_database_url
-import tempfile
 
 # Especially in workflow
 if os.getenv("CI") == "true":
