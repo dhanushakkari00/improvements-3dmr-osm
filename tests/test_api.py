@@ -8,14 +8,15 @@ import zipfile
 import os
 import tempfile
 import shutil
+from django.conf import settings
 from django.test.utils import override_settings
 
 
-@override_settings(MODEL_DIR=tempfile.gettempdir())
 class APITestCase(TestCase):
     def setUp(self):
         self.test_dir = tempfile.mkdtemp()
         os.environ["MODEL_DIR"] = self.test_dir
+        settings.MODEL_DIR = self.test_dir
         os.makedirs(os.path.join(self.test_dir, "1"), exist_ok=True)
         with zipfile.ZipFile(os.path.join(self.test_dir, "1", "1.zip"), "w") as zipf:
             zipf.writestr("dummy.obj", "fake obj content")
