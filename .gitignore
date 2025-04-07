@@ -1,3 +1,4 @@
 .env
+.gsocenv
 db.sqlite3
 *__pycache__
