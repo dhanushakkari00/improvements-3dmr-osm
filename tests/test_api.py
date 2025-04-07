@@ -54,7 +54,6 @@ class APITestCase(TestCase):
 
     def tearDown(self):
         shutil.rmtree(self.test_dir)
-        self.override.disable()
 
     def test_get_info(self):
         response = self.client.get(reverse('get_info', args=[self.model.model_id]))
